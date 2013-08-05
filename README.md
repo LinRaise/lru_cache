@@ -1,4 +1,4 @@
-lru_cache
+LRU Cache
 =========
 
 ## What is LRU?
