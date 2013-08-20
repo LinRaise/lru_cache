@@ -13,19 +13,22 @@ using namespace std;
 using namespace __gnu_cxx;
 
 template <class K, class T>
-struct LRUCacheEntry{
+struct LRUCacheEntry {
   K key;
   T data;
   LRUCacheEntry *prev, *next;
 };
 
 template <class K, class T>
-class LRUCache{
+class LRUCache {
+
   public:
     LRUCache(size_t size) {
       _entries = new LRUCacheEntry<K,T>[size];
-      for(int i=0; i<size; ++i)
+
+      for(int i=0; i<size; ++i) {
         _free_entries.push_back(_entries+i);
+      }
       _head = new LRUCacheEntry<K,T>;
       _tail = new LRUCacheEntry<K,T>;
       _head->prev = NULL;
@@ -33,25 +36,25 @@ class LRUCache{
       _tail->prev = _head;
       _tail->next = NULL;
     }
+
     ~LRUCache() {
       delete _head;
       delete _tail;
       delete[] _entries;
     }
+
     void Put(K key, T data) {
       LRUCacheEntry<K,T> *node = _hashmap[key];
       if(node) { // node exists
         detach(node);
         node->data = data;
         attach(node);
-      }
-      else {
+      } else {
         if(_free_entries.empty()) {// cache is full
           node = _tail->prev;
           detach(node);
           _hashmap.erase(node->key);
-        }
-        else { //get a free node from _free_entries
+        } else { //get a free node from _free_entries
           node = _free_entries.back();
           _free_entries.pop_back();
         }
@@ -61,6 +64,7 @@ class LRUCache{
         attach(node);
       }
     }
+
     T Get(K key) {
       LRUCacheEntry<K,T> *node = _hashmap[key];
       if(node) { // hit
@@ -89,9 +93,9 @@ class LRUCache{
 
   private:
     hash_map<K, LRUCacheEntry<K,T>* > _hashmap;
-    vector< LRUCacheEntry<K,T>* > _free_entries; // 存储可用结点的地址
+    vector< LRUCacheEntry<K,T>* > _free_entries;
     LRUCacheEntry<K,T> *_head, *_tail;
-    LRUCacheEntry<K,T> *_entries; // 双向链表中的结点
+    LRUCacheEntry<K,T> *_entries;
 };
 
 int main() {
